@@ -1,6 +1,6 @@
 module github.com/CMSOTO2/my-recipe-app-api
 
-go 1.21.5
+go 1.16
 
 require (
 	github.com/bytedance/sonic v1.9.1 // indirect
