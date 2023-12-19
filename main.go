@@ -13,7 +13,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-// Recipe struct represents a recipe.
 type Recipe struct {
 	ID          string   `json:"id"`
 	Name        string   `json:"name"`
@@ -30,7 +29,6 @@ var client *mongo.Client
 var recipesCollection *mongo.Collection
 
 func init() {
-	// Connect to MongoDB
 	mongoURI := "mongodb://localhost:27017"
 	clientOptions := options.Client().ApplyURI(mongoURI)
 	client, err := mongo.Connect(context.Background(), clientOptions)
@@ -42,25 +40,20 @@ func init() {
 		log.Fatal("Could not connect to MongoDB:", err)
 	}
 
-	// Set up the collection
 	recipesCollection = client.Database("recipe-web-app").Collection("recipes")
 }
 
 func main() {
-	// Set up Gin router
 	router := gin.Default()
 
-	// Define routes
 	router.GET("/recipes", getRecipesHandler)
 	router.POST("/recipes", createRecipeHandler)
 
-	// Get the port from the environment variable or use a default value
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
 	}
 
-	// Start the server
 	address := fmt.Sprintf(":%s", port)
 	log.Printf("Server is running on %s...", address)
 	log.Fatal(http.ListenAndServe(address, router))
@@ -88,14 +81,12 @@ func getRecipesHandler(c *gin.Context) {
 }
 
 func createRecipeHandler(c *gin.Context) {
-	// Parse JSON request body
 	var recipe Recipe
 	if err := c.BindJSON(&recipe); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request payload"})
 		return
 	}
 
-	// Insert the recipe into MongoDB
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
